@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'books', views.BookViewSet)
 router.register(r'authors', views.AuthorViewSet)
+router.register(r'requests', views.RequestViewSet)
 
 app_name = "booksapp"
 urlpatterns = [ 

@@ -10,16 +10,19 @@ from django.views.generic.edit import CreateView
 from .forms import CreateBookForm
 from datetime import datetime, timedelta
 from .serializers import RequestSerializer, BookSerializer, AuthorSerializer
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import Http404
+from rest_framework import permissions
+from .filterusers import IsUserOrAdminFilter
 
 
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    # permission_classes = [permissions.AllowAny]
 
     def perform_create(self, serializer):
         serializer.save(book_title=serializer.validated_data['book_title'] + '!')
@@ -70,7 +73,13 @@ class AuthorViewSet(viewsets.ModelViewSet):
         return Response({'id': author.id, 'name': author.name_author, 'books': books_data})
    
 
+class RequestViewSet(viewsets.ModelViewSet):
+    queryset = BorrowRequest.objects.all()
+    serializer_class = RequestSerializer
+    filter_backends = [filters.OrderingFilter, IsUserOrAdminFilter] 
 
+    def perform_create(self, serializer):
+        serializer.save(borrower=self.request.user)
 
 # class BookListView(ListView):
 #     model = Book
