@@ -1,5 +1,6 @@
 from django.urls import path, include
 from . import views
+from .customtoken import CustomAuthToken
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -10,6 +11,7 @@ router.register(r'requests', views.RequestViewSet)
 app_name = "booksapp"
 urlpatterns = [ 
     path('', include(router.urls)),
+    path('api-token-auth/', CustomAuthToken.as_view())
     # path('', views.BookListView.as_view(), name='home_page'),
     # path('borrow_history/', views.BorrowListView.as_view(), name='borrow_list'),
     # path('borrow_request/<int:pk>/', views.BorrowRequestView.as_view(), name='borrow_request'),
