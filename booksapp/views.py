@@ -18,10 +18,10 @@ from rest_framework import permissions
 from .filterusers import IsUserOrAdminFilter
 
 
-
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+
     # permission_classes = [permissions.AllowAny]
 
     def perform_create(self, serializer):
@@ -34,8 +34,6 @@ class BookViewSet(viewsets.ModelViewSet):
         if author_age is not None:
             queryset = queryset.filter(book_authors__author_age__gte=author_age)
         return queryset
-
-
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -54,38 +52,37 @@ class AuthorViewSet(viewsets.ModelViewSet):
 
         return Response(data)
 
-
     def get_queryset(self):
         queryset = Author.objects.all()
         book_name = self.request.query_params.get('book_name')
-        
+
         if book_name is not None:
             queryset = queryset.filter(book__book_title__icontains=book_name).distinct()
-        
-        return queryset
 
+        return queryset
 
     @action(detail=True, methods=['GET'])
     def author_books(self, request, pk=None):
         author = self.get_object()
         books = Book.objects.filter(book_authors=author)
-        books_data = [{'book_id': book.id,'book_title': book.book_title,} for book in books]
+        books_data = [{'book_id': book.id, 'book_title': book.book_title, } for book in books]
         return Response({'id': author.id, 'name': author.name_author, 'books': books_data})
-   
+
 
 class RequestViewSet(viewsets.ModelViewSet):
     queryset = BorrowRequest.objects.all()
     serializer_class = RequestSerializer
-    filter_backends = [filters.OrderingFilter, IsUserOrAdminFilter] 
+    filter_backends = [filters.OrderingFilter, IsUserOrAdminFilter]
 
     def perform_create(self, serializer):
         serializer.save(borrower=self.request.user)
+
+
 
 # class BookListView(ListView):
 #     model = Book
 #     template_name = 'book_list.html'
 #     context_object_name = 'books'
-
 
 
 # @method_decorator(login_required, name='dispatch')
@@ -100,7 +97,6 @@ class RequestViewSet(viewsets.ModelViewSet):
 #             return BorrowRequest.objects.all()
 #         else:
 #             return BorrowRequest.objects.filter(borrower=user)
-
 
 
 # class BorrowRequestView(DetailView):
@@ -151,8 +147,6 @@ class RequestViewSet(viewsets.ModelViewSet):
 #             raise Http404('This book is not found')
 
 
-
-
 # class CreateBookView(CreateView):
 #     model = Book
 #     form_class = CreateBookForm
@@ -185,4 +179,4 @@ class RequestViewSet(viewsets.ModelViewSet):
 # class DetailBookView(DetailView):
 #     model = Book
 #     template_name = 'book_detail.html'
-#     context_object_name = 'book'  
+#     context_object_name = 'book'

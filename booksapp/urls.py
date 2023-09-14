@@ -4,9 +4,9 @@ from .customtoken import CustomAuthToken
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'books', views.BookViewSet)
-router.register(r'authors', views.AuthorViewSet)
-router.register(r'requests', views.RequestViewSet)
+router.register(r'books', views.BookViewSet, basename='books')
+router.register(r'authors', views.AuthorViewSet, basename='authors')
+router.register(r'requests', views.RequestViewSet, basename='requests')
 
 app_name = "booksapp"
 urlpatterns = [ 
