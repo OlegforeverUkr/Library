@@ -36,7 +36,7 @@ class Book(models.Model):
     published_date = models.DateField()
     publisher_book = models.CharField(max_length=255)
 
-    book_authors = models.ManyToManyField(Author)
+    book_authors = models.ManyToManyField(Author, related_name='author_books')
     book_genre = models.ManyToManyField(Genre, blank=True)
     book_borrower = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, blank=True)
 
