@@ -2,12 +2,10 @@ from rest_framework import serializers
 from .models import Author, Book, UserModel, BorrowRequest
 
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
-
 
 
 class RequestSerializer(serializers.ModelSerializer):
@@ -18,9 +16,16 @@ class RequestSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class AuthorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Author
+        fields = "__all__"
+
 
 class BookSerializer(serializers.ModelSerializer):
     orders = RequestSerializer(many=True, read_only=True)
+    authors = AuthorSerializer(many=True, read_only=True)
 
     class Meta:
         model = Book
@@ -35,12 +40,4 @@ class BookSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError("Краткое описание книги не может быть пустым.")
         return value
-
-
-class AuthorSerializer(serializers.ModelSerializer):
-    books = BookSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Author
-        fields = "__all__"
 

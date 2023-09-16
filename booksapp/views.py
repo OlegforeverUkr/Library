@@ -39,18 +39,8 @@ class BookViewSet(viewsets.ModelViewSet):
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-
-        books = Book.objects.filter(book_authors=instance)
-        book_serializer = BookSerializer(books, many=True)
-
-        data = serializer.data
-        data['books'] = book_serializer.data
-
-        return Response(data)
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name_author']
 
     def get_queryset(self):
         queryset = Author.objects.all()
@@ -64,7 +54,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def author_books(self, request, pk=None):
         author = self.get_object()
-        books = Book.objects.filter(book_authors=author)
+        books = author.book_set.all()
         books_data = [{'book_id': book.id, 'book_title': book.book_title, } for book in books]
         return Response({'id': author.id, 'name': author.name_author, 'books': books_data})
 

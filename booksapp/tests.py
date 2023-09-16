@@ -109,7 +109,7 @@ class BorrowRequestTestCase(TestCase):
         self.assertEqual(str(self.borrow_request), expected_str)
 
 
-class TestBookViewSet(APITestCase):
+class TestBookListViewSet(APITestCase):
     def setUp(self) -> None:
         self.author = Author.objects.create(
             name_author='test',
