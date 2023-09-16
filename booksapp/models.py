@@ -1,13 +1,18 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-
 UserModel = get_user_model()
 
 
 class Author(models.Model):
     name_author = models.CharField(max_length=255, unique=True)
     bio_author = models.TextField()
+    author_age = models.IntegerField( 
+        verbose_name='Возраст автора',
+        blank=True,
+        null=True,
+        default=0,
+    )
 
     class Meta:
         ordering = ['name_author']
@@ -16,13 +21,11 @@ class Author(models.Model):
         return self.name_author
 
 
-
 class Genre(models.Model):
     name_genre = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
         return self.name_genre
-
 
 
 class Book(models.Model):
@@ -33,7 +36,7 @@ class Book(models.Model):
     published_date = models.DateField()
     publisher_book = models.CharField(max_length=255)
 
-    book_authors = models.ManyToManyField(Author)
+    book_authors = models.ManyToManyField(Author, related_name='author_books')
     book_genre = models.ManyToManyField(Genre, blank=True)
     book_borrower = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -44,15 +47,13 @@ class Book(models.Model):
         return self.book_title
 
 
-
 class Message(models.Model):
     sender = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     content = models.TextField()
     time_send = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return f"From {self.sender} at {self.time_send}"
-
 
 
 class BorrowRequest(models.Model):
